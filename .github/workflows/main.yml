@@ -62,31 +62,32 @@ jobs:
           echo "✅ Image loaded successfully"
           docker images
 
-      - name: Run Trivy vulnerability scanner on image
-        uses: aquasecurity/trivy-action@master
-        with:
-          input: 'docker-image://flask-demo:latest'
+       - name: Run Trivy vulnerability scanner (table output)
+         uses: aquasecurity/trivy-action@master
+         with:
+          image-ref: 'flask-demo:latest'
           format: 'table'
           exit-code: '0'
           severity: 'CRITICAL,HIGH,MEDIUM'
 
-      - name: Run Trivy vulnerability scanner (JSON output)
-        uses: aquasecurity/trivy-action@master
-        with:
-          input: 'docker-image://flask-demo:latest'
+       - name: Run Trivy vulnerability scanner (JSON output)
+         uses: aquasecurity/trivy-action@master
+         with:
+          image-ref: 'flask-demo:latest'
           format: 'json'
           output: 'trivy-results.json'
 
-      - name: Run Trivy vulnerability scanner (SARIF output)
-        uses: aquasecurity/trivy-action@master
-        with:
-          input: 'docker-image://flask-demo:latest'
+       - name: Run Trivy vulnerability scanner (SARIF output)
+         uses: aquasecurity/trivy-action@master
+         with:
+          image-ref: 'flask-demo:latest'
           format: 'sarif'
           output: 'trivy-results.sarif'
+
           
 
-      - name: Check for CRITICAL vulnerabilities
-        run: |
+       - name: Check for CRITICAL vulnerabilities
+          run: |
           echo "========== Trivy Security Scan Report =========="
           cat trivy-results.json | jq '.'
           
