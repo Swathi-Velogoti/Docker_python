@@ -83,12 +83,7 @@ jobs:
           input: 'docker-image://flask-demo:latest'
           format: 'sarif'
           output: 'trivy-results.sarif'
-
-      - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
+          
 
       - name: Check for CRITICAL vulnerabilities
         run: |
