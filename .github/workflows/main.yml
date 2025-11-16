@@ -11,7 +11,7 @@ jobs:
     name: "Job 1: Checkout Code"
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Code checked out successfully
         run: echo "✅ Code checkout complete"
 
@@ -22,7 +22,7 @@ jobs:
     needs: checkout
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build Docker image
         run: |
@@ -38,7 +38,7 @@ jobs:
           echo "✅ Image saved to artifact"
 
       - name: Upload Docker image artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docker-image
           path: /tmp/docker-images/flask-demo.tar
@@ -51,7 +51,7 @@ jobs:
     needs: build
     steps:
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: docker-image
           path: /tmp/docker-images
@@ -85,7 +85,7 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
@@ -122,7 +122,7 @@ jobs:
       image-uri: ${{ steps.push.outputs.image-uri }}
     steps:
       - name: Download Docker image artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: docker-image
           path: /tmp/docker-images
@@ -133,7 +133,7 @@ jobs:
           echo "✅ Image loaded successfully"
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
