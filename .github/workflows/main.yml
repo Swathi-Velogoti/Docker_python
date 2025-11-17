@@ -222,6 +222,7 @@ jobs:
             echo "❌ Application validation FAILED (HTTP $HTTP_CODE)"
             exit 1
           fi
+          fi
 
       - name: Check container status
         if: success()
