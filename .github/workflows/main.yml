@@ -153,10 +153,11 @@ jobs:
           docker tag flask-demo:latest $IMAGE_URI
           docker push $IMAGE_URI
           echo "image-uri=$IMAGE_URI" >> $GITHUB_OUTPUT
+          echo "Pushed image: $IMAGE_URI"
           echo "✅ Image pushed to ECR successfully"
 
-  # Job 5: Deploy to EC2
-  deploy:
+
+       deploy:
     runs-on: ubuntu-latest
     name: "Job 5: Deploy to EC2"
     needs: push
@@ -180,25 +181,21 @@ jobs:
           script: |
             set -e
             IMAGE_URI="${{ needs.push.outputs.image-uri }}"
-
-            echo "========== Pulling latest image from ECR =========="
             echo "Image URI: $IMAGE_URI"
+
             docker pull $IMAGE_URI
 
-            echo "========== Stopping old container =========="
             docker stop myapp || true
             docker rm myapp || true
 
-            echo "========== Starting new container =========="
             docker run -d \
               --name myapp \
               --restart=always \
               -p 80:80 \
               $IMAGE_URI
 
-            echo "========== Container started =========="
             docker ps -a | grep myapp
-            echo "✅ Deployment to EC2 complete"
+            echo "✅ Deployment completed"
 
   # Job 6: Validate deployment
   validate:
@@ -235,5 +232,4 @@ jobs:
           echo "  ssh -i your_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}"
           echo "  docker ps"
           echo "  docker logs myapp"
-          echo "All validations passed"
-        
+          echo "✅ All validations passed succuessfully!"
