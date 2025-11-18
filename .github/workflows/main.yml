@@ -116,13 +116,12 @@ jobs:
           
           echo "✅ Security scan passed - proceeding to push"
 
-  # Job 4: Push to ECR
-  push:
+    push:
     runs-on: ubuntu-latest
     name: "Job 4: Push to ECR"
     needs: security-scan
     outputs:
-      image-uri: ${{ steps.push.outputs.image-uri }}
+      image-uri: ${{ steps.ecrpush.outputs.image-uri }}
     steps:
       - name: Download Docker image artifact
         uses: actions/download-artifact@v4
@@ -147,7 +146,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Tag and push image to ECR
-        id: push
+        id: ecrpush
         run: |
           IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:latest"
           echo "Tagging image as: $IMAGE_URI"
