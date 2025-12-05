@@ -1,0 +1,15 @@
+# Staging environment values
+replicaCount: 2
+
+image:
+  repository: ghcr.io/swathi-velogoti/myapp
+  pullPolicy: IfNotPresent
+  tag: "staging"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: myapp-staging.127.0.0.1.nip.io
+      paths:
+        - path: /
+          pathType: Prefix

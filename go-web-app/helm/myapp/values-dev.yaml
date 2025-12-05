@@ -1,0 +1,15 @@
+# Development environment values
+replicaCount: 1
+
+image:
+  repository: ghcr.io/swathi-velogoti/myapp
+  pullPolicy: IfNotPresent
+  tag: "dev"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: myapp-dev.127.0.0.1.nip.io
+      paths:
+        - path: /
+          pathType: Prefix
