@@ -116,7 +116,7 @@ jobs:
           
           echo "✅ Security scan passed - proceeding to push"
 
-    push:
+  push:
     runs-on: ubuntu-latest
     name: "Job 4: Push to ECR"
     needs: security-scan
