@@ -93,9 +93,28 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
-      - name: Security check
+      - name: Check for CRITICAL vulnerabilities
         run: |
-          echo "✅ Security scan completed - proceeding to push"
+          echo "========== Trivy Security Scan Report =========="
+          cat trivy-results.json | jq '.'
+          
+          CRITICAL_COUNT=$(cat trivy-results.json | jq '[.Results[]?.Misconfigurations[]? | select(.Severity=="CRITICAL")] | length' || echo 0)
+          HIGH_COUNT=$(cat trivy-results.json | jq '[.Results[]?.Misconfigurations[]? | select(.Severity=="HIGH")] | length' || echo 0)          
+          echo ""
+          echo "CRITICAL Issues: $CRITICAL_COUNT"
+          echo "HIGH Issues: $HIGH_COUNT"
+          
+          if [ "$CRITICAL_COUNT" -gt 0 ]; then
+            echo "❌ Found CRITICAL vulnerabilities - blocking deployment"
+            exit 1
+          fi
+          
+          if [ "$HIGH_COUNT" -gt 0 ]; then
+            echo "⚠️  WARNING: Found HIGH severity issues (continuing)"
+          fi
+          
+          echo "✅ Security scan passed - proceeding to push"
+
   push:
     runs-on: ubuntu-latest
     name: "Job 4: Push to ECR"
