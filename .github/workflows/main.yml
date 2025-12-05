@@ -98,10 +98,8 @@ jobs:
           echo "========== Trivy Security Scan Report =========="
           cat trivy-results.json | jq '.'
           
-          CRITICAL_COUNT=$(cat trivy-results.json | jq '[.Results[]?.Misconfigurations[]? | select(.Severity=="CRITICAL")] | length' || echo 0)
-          HIGH_COUNT=$(cat trivy-results.json | jq '[.Results[]?.Misconfigurations[]? | select(.Severity=="HIGH")] | length' || echo 0)
-          
-          echo ""
+          CRITICAL_COUNT=$(grep -o ""CRITICAL"" trivy-results.json | wc -l || echo 0)
+          HIGH_COUNT=$(grep -o ""HIGH"" trivy-results.json | wc -l || echo 0)
           echo "CRITICAL Issues: $CRITICAL_COUNT"
           echo "HIGH Issues: $HIGH_COUNT"
           
