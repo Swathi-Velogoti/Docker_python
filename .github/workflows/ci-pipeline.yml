@@ -1,0 +1,28 @@
+name: CI/CD Pipeline - Complete
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Stage 1: Build & Test
+  build-test:
+    uses: ./.github/workflows/01-build-test.yml
+
+  # Stage 2: Docker Build
+  docker-build:
+    uses: ./.github/workflows/02-docker-build.yml
+    needs: build-test
+
+  # Stage 3: Security Scan
+  security-scan:
+    uses: ./.github/workflows/03-security-scan.yml
+    needs: docker-build
+
+  # Stage 4: Deploy
+  deploy:
+    uses: ./.github/workflows/04-deploy.yml
+    needs: security-scan
+    if: github.ref == 'refs/heads/main'

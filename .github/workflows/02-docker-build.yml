@@ -1,0 +1,36 @@
+name: CI - Docker Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: "Build Docker Image"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          IMAGE_NAME="myapp:${{ github.sha }}"
+          echo "Building image: $IMAGE_NAME"
+          docker build -t $IMAGE_NAME .
+          echo "✅ Docker image built successfully"
+
+      - name: Save Docker image as artifact
+        run: |
+          mkdir -p /tmp/docker-images
+          docker save myapp:${{ github.sha }} -o /tmp/docker-images/myapp.tar
+          echo "✅ Image saved to artifact"
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-image
+          path: /tmp/docker-images/myapp.tar
+          retention-days: 1
