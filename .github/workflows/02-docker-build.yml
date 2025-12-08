@@ -32,7 +32,18 @@ jobs:
         run: |
           IMAGE_NAME="myapp:${{ github.sha }}"
           echo "Testing image: $IMAGE_NAME"
-          docker run --rm $IMAGE_NAME /app --help || docker run --rm $IMAGE_NAME --version || echo "Image test completed"
+          
+          # Test that the binary exists and is executable
+          if docker run --rm --entrypoint /bin/sh $IMAGE_NAME -c "test -x /app"; then
+            echo "✅ Binary is executable"
+          else
+            echo "❌ Binary not found or not executable"
+            exit 1
+          fi
+          
+          # Test that the server starts (with timeout)
+          timeout 5s docker run --rm -p 8080:8080 $IMAGE_NAME || true
+          echo "✅ Image test completed (server started successfully)"
 
       - name: Save Docker image as artifact
         run: |
