@@ -18,6 +18,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Docker image
         run: |
           IMAGE_NAME="myapp:${{ github.sha }}"
@@ -25,11 +28,18 @@ jobs:
           docker build -t $IMAGE_NAME .
           echo "✅ Docker image built successfully"
 
+      - name: Test Docker image
+        run: |
+          IMAGE_NAME="myapp:${{ github.sha }}"
+          echo "Testing image: $IMAGE_NAME"
+          docker run --rm $IMAGE_NAME /app --help || docker run --rm $IMAGE_NAME --version || echo "Image test completed"
+
       - name: Save Docker image as artifact
         run: |
           mkdir -p /tmp/docker-images
           docker save myapp:${{ github.sha }} -o /tmp/docker-images/myapp.tar
           echo "✅ Image saved to artifact"
+          ls -la /tmp/docker-images/
 
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4

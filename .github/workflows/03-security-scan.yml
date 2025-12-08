@@ -21,10 +21,22 @@ jobs:
           name: docker-image
           path: /tmp/docker-images
 
+      - name: Verify artifact download
+        run: |
+          echo "Checking downloaded artifact..."
+          ls -la /tmp/docker-images/
+          if [ ! -f /tmp/docker-images/myapp.tar ]; then
+            echo "❌ Artifact file not found!"
+            exit 1
+          fi
+          echo "✅ Artifact downloaded successfully"
+
       - name: Load Docker image
         run: |
+          echo "Loading Docker image..."
           docker load -i /tmp/docker-images/myapp.tar
           echo "✅ Docker image loaded"
+          docker images
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
