@@ -28,16 +28,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      - name: Change to go-web-app directory
+        run: cd go-web-app
+
       - name: Download dependencies
-        run: go mod download
+        run: |
+          cd go-web-app
+          go mod download
 
       - name: Run tests
-        run: go test -v ./...
+        run: |
+          cd go-web-app
+          go test -v ./...
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
+          working-directory: go-web-app
 
       - name: Build application
-        run: go build -v ./...
+        run: |
+          cd go-web-app
+          go build -v ./...

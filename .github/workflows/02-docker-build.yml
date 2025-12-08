@@ -17,6 +17,7 @@ jobs:
 
       - name: Build Docker image
         run: |
+          cd go-web-app
           IMAGE_NAME="myapp:${{ github.sha }}"
           echo "Building image: $IMAGE_NAME"
           docker build -t $IMAGE_NAME .
@@ -24,6 +25,7 @@ jobs:
 
       - name: Save Docker image as artifact
         run: |
+          cd go-web-app
           mkdir -p /tmp/docker-images
           docker save myapp:${{ github.sha }} -o /tmp/docker-images/myapp.tar
           echo "✅ Image saved to artifact"

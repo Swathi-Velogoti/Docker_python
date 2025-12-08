@@ -8,9 +8,9 @@ on:
   workflow_call:
 
 jobs:
-  security-scan:
+  security:
     runs-on: ubuntu-latest
-    name: "Security Scan (Trivy)"
+    name: "Security Scan"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,28 +24,18 @@ jobs:
       - name: Load Docker image
         run: |
           docker load -i /tmp/docker-images/myapp.tar
-          echo "✅ Image loaded successfully"
+          echo "✅ Docker image loaded"
 
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'myapp:${{ github.sha }}'
-          format: 'table'
-          exit-code: '0'
-          severity: 'CRITICAL,HIGH,MEDIUM'
-
-      - name: Run Trivy (SARIF output)
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'myapp:${{ github.sha }}'
+          scan-type: 'image'
+          scan-ref: 'myapp:${{ github.sha }}'
           format: 'sarif'
           output: 'trivy-results.sarif'
 
-      - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v2
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
-
-      - name: Security check
-        run: echo "✅ Security scan completed"
