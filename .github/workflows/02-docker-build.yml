@@ -11,13 +11,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: "Build Docker Image"
+    defaults:
+      run:
+        working-directory: go-web-app
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Build Docker image
         run: |
-          cd go-web-app
           IMAGE_NAME="myapp:${{ github.sha }}"
           echo "Building image: $IMAGE_NAME"
           docker build -t $IMAGE_NAME .
@@ -25,7 +27,6 @@ jobs:
 
       - name: Save Docker image as artifact
         run: |
-          cd go-web-app
           mkdir -p /tmp/docker-images
           docker save myapp:${{ github.sha }} -o /tmp/docker-images/myapp.tar
           echo "✅ Image saved to artifact"

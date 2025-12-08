@@ -11,6 +11,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: "Test Application"
+    defaults:
+      run:
+        working-directory: go-web-app
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,30 +27,20 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-go-${{ hashFiles('go-web-app/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Change to go-web-app directory
-        run: cd go-web-app
-
       - name: Download dependencies
-        run: |
-          cd go-web-app
-          go mod download
+        run: go mod download
 
       - name: Run tests
-        run: |
-          cd go-web-app
-          go test -v ./...
+        run: go test -v ./...
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
-          working-directory: go-web-app
 
       - name: Build application
-        run: |
-          cd go-web-app
-          go build -v ./...
+        run: go build -v ./...
