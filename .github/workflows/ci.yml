@@ -69,7 +69,7 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
-    - name: Test Docker image (distroless/scratch compatible)
+    - name: Test Docker image (distroless-compatible)
       run: |
         IMAGE_NAME="$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)"
         echo "Testing image: $IMAGE_NAME"
@@ -82,6 +82,6 @@ jobs:
           exit 1
         fi
 
-        echo "➡️ Testing if server starts"
+        echo "➡️ Testing server startup"
         timeout 5s docker run --rm -p 8080:8080 $IMAGE_NAME || true
         echo "✅ Server startup test complete"
